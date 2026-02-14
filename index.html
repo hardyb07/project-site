@@ -173,12 +173,22 @@
         const nextBtn = carousel.querySelector('[data-next]');
 
         let index = 0;
+        const mq = window.matchMedia('(max-width: 960px)');
 
         function mod(n, m) {
           return ((n % m) + m) % m;
         }
 
-        function render() {
+        function setMobileMode() {
+          // Mobile uses native horizontal scroll (no JS states)
+          slides.forEach((slide) => {
+            slide.classList.remove('is-active', 'is-prev', 'is-next', 'is-hidden');
+            slide.removeAttribute('aria-hidden');
+          });
+          track.style.height = '';
+        }
+
+        function renderDesktop() {
           slides.forEach((slide, i) => {
             // distance around a loop (-1,0,1) with wrap support
             const raw = i - index;
@@ -195,40 +205,50 @@
             slide.setAttribute('aria-hidden', offset === 0 ? 'false' : 'true');
           });
 
-          // Because slides are absolutely positioned, the track needs an explicit height.
-          // Sync it to the active card so arrows center on the full card (not just the media area).
+          // Sync track height to the active slide (arrows center on full card)
           const active = slides[index];
-          if (active) {
-            track.style.height = active.offsetHeight + 'px';
-          }
+          if (active) track.style.height = active.offsetHeight + 'px';
+        }
+
+        function render() {
+          if (mq.matches) return setMobileMode();
+          return renderDesktop();
         }
 
         function go(delta) {
+          if (mq.matches) return; // ignore on mobile
           index = mod(index + delta, slides.length);
-          render();
+          renderDesktop();
         }
 
         prevBtn.addEventListener('click', (e) => { e.preventDefault(); go(-1); });
         nextBtn.addEventListener('click', (e) => { e.preventDefault(); go(1); });
 
-        // Optional: click the peeking cards to move
+        // Optional: click the peeking cards to move (desktop only)
         slides.forEach((slide) => {
           slide.addEventListener('click', () => {
+            if (mq.matches) return;
             if (slide.classList.contains('is-prev')) go(-1);
             if (slide.classList.contains('is-next')) go(1);
           });
         });
 
-        // Keep height correct on resize
-        window.addEventListener('resize', () => {
-          // small defer so layout settles
-          window.requestAnimationFrame(render);
-        });
-
-        // Keyboard support on the carousel region
+        // Keyboard support (desktop only)
         track.addEventListener('keydown', (e) => {
+          if (mq.matches) return;
           if (e.key === 'ArrowLeft') { e.preventDefault(); go(-1); }
           if (e.key === 'ArrowRight') { e.preventDefault(); go(1); }
+        });
+
+        // Re-render on breakpoint change + resize
+        mq.addEventListener('change', () => {
+          // reset index so it doesn't feel broken when switching modes
+          index = 0;
+          render();
+        });
+
+        window.addEventListener('resize', () => {
+          window.requestAnimationFrame(render);
         });
 
         // Initial
