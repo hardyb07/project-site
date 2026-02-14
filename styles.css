@@ -326,10 +326,21 @@ a { text-decoration: none; color: inherit; }
 }
 
 .icon img {
-  width: 18px;
-  height: 18px;
+  width: 18px !important;
+  height: 18px !important;
   object-fit: contain;
   display: block;
+}
+
+/* Extra safety: ensure footer icons never render at natural PNG size */
+.footer-icons .icon {
+  width: 32px !important;
+  height: 32px !important;
+}
+
+.footer-icons .icon img {
+  width: 18px !important;
+  height: 18px !important;
 }
 
 .icon:hover img {
