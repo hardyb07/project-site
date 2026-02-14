@@ -184,27 +184,28 @@ a { text-decoration: none; color: inherit; }
 
 /* ===== FEATURES ===== */
 
-/* Desktop: centered carousel with "peek" left/right */
+/* Desktop: centered carousel with "peek" left/right (3-up with overlap) */
 .benefits-carousel {
   position: relative;
-  display: grid;
-  grid-template-columns: 48px 1fr 48px;
-  align-items: center;
-  gap: 12px;
+  padding: 0 72px; /* space for arrows */
 }
 
 .benefits-track {
   position: relative;
   height: 360px; /* enough for card + media */
+  overflow: visible; /* allow side cards to peek */
   outline: none;
 }
 
 .carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
   width: 44px;
   height: 44px;
   border-radius: 999px;
   border: 1px solid rgba(22, 30, 84, 0.18);
-  background: rgba(255, 255, 255, 0.75);
+  background: rgba(255, 255, 255, 0.85);
   color: var(--midnight);
   font-size: 28px;
   line-height: 1;
@@ -213,16 +214,15 @@ a { text-decoration: none; color: inherit; }
   justify-content: center;
   cursor: pointer;
   transition: 0.15s ease;
+  z-index: 5;
 }
+
+.carousel-btn--prev { left: 8px; }
+.carousel-btn--next { right: 8px; }
 
 .carousel-btn:hover {
   border-color: rgba(255, 152, 106, 0.8);
   color: var(--coral);
-}
-
-.carousel-btn:disabled {
-  opacity: 0.35;
-  cursor: not-allowed;
 }
 
 /* Cards are stacked; we transform them based on state */
@@ -230,36 +230,36 @@ a { text-decoration: none; color: inherit; }
   position: absolute;
   top: 0;
   left: 50%;
-  width: min(560px, 100%);
+  width: min(680px, 100%);
   transform: translateX(-50%);
-  transition: transform 260ms ease, opacity 260ms ease, filter 260ms ease;
+  transition: transform 320ms ease, opacity 320ms ease;
   will-change: transform, opacity;
+  pointer-events: none; /* only active is clickable */
 }
 
 .benefits-track .feature-card.is-active {
+  pointer-events: auto;
   transform: translateX(-50%) scale(1);
   opacity: 1;
   z-index: 3;
 }
 
 .benefits-track .feature-card.is-prev {
-  transform: translateX(calc(-50% - 320px)) scale(0.92);
-  opacity: 0.55;
+  transform: translateX(calc(-50% - 420px)) scale(0.88);
+  opacity: 0.65;
   z-index: 2;
-  filter: blur(0.2px);
 }
 
 .benefits-track .feature-card.is-next {
-  transform: translateX(calc(-50% + 320px)) scale(0.92);
-  opacity: 0.55;
+  transform: translateX(calc(-50% + 420px)) scale(0.88);
+  opacity: 0.65;
   z-index: 2;
-  filter: blur(0.2px);
 }
 
 .benefits-track .feature-card.is-hidden {
   opacity: 0;
   pointer-events: none;
-  transform: translateX(-50%) scale(0.9);
+  transform: translateX(-50%) scale(0.86);
   z-index: 1;
 }
 
@@ -388,11 +388,6 @@ a { text-decoration: none; color: inherit; }
 /* ===== RESPONSIVE ===== */
 @media (max-width: 960px) {
   /* Mobile: swipeable carousel for benefits (no JS) */
-  .benefits-carousel {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-
   .carousel-btn {
     display: none;
   }
