@@ -314,26 +314,23 @@ a { text-decoration: none; color: inherit; }
 
 .footer-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 28px;
-}
-
-.footer-col {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-
-.footer-col--right {
-  align-items: flex-end;
+  grid-template-columns: 1fr;
+  gap: 16px;
 }
 
 .footer-brand {
   display: inline-flex;
 }
 
+.footer-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
 .footer-heading {
-  margin: 0 0 10px;
+  margin: 0;
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -344,6 +341,7 @@ a { text-decoration: none; color: inherit; }
 .footer-links {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   gap: 10px;
   font-size: 13px;
   opacity: 0.95;
@@ -354,6 +352,7 @@ a { text-decoration: none; color: inherit; }
 .footer-icons {
   display: flex;
   gap: 10px;
+  flex-shrink: 0;
 }
 
 .icon {
@@ -429,94 +428,37 @@ a { text-decoration: none; color: inherit; }
   /* Signup */
   .signup { grid-template-columns: 1fr; }
 
-  /* Footer: keep 2 columns but tighten spacing */
+  /* Footer tweaks */
   .footer { padding: 32px 0; }
-  .footer-grid { gap: 20px; }
-  .footer-col--right { align-items: flex-end; }
+  .footer-grid { gap: 14px; }
 }
 
-  .container { padding: 0 24px; }
-
-  /* Benefits: show tabs + one stacked card */
-  .benefits-tabs {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin-bottom: 14px;
-  }
-
-  .tab {
-    border: 1px solid rgba(22, 30, 84, 0.18);
-    background: rgba(255, 255, 255, 0.8);
-    color: var(--midnight);
-    padding: 10px 12px;
-    border-radius: 999px;
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-  }
-
-  .tab.is-active {
-    background: rgba(255, 152, 106, 0.22);
-    border-color: rgba(255, 152, 106, 0.65);
-  }
-
-  .carousel-btn { display: none; }
-
-  .benefits-track {
-    position: static;
-    height: auto;
-    width: 100%;
-  }
-
-  .benefits-track .feature-card {
-    position: static;
-    width: 100%;
-    max-width: 100%;
-    transform: none;
-    opacity: 1;
-    pointer-events: auto;
-    transition: none;
-    display: none; /* only show active */
-  }
-
-  .benefits-track .feature-card.is-active {
-    display: flex;
-  }
-
-  /* Signup */
-  .signup { grid-template-columns: 1fr; }
-
-  /* Footer */
-  .footer-inner {
-    display: grid;
-    grid-template-columns: 1fr auto;
+@media (min-width: 961px) {
+  /* Desktop footer: 2 columns look */
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
     grid-template-rows: auto auto;
-    align-items: center;
-    gap: 16px;
-    text-align: left;
+    column-gap: 40px;
+    row-gap: 14px;
+    align-items: start;
   }
 
-  /* Row 1: logo left, icons right */
-  .footer-inner .logo {
+  .footer-brand {
     grid-column: 1;
     grid-row: 1;
-    justify-self: start;
+  }
+
+  .footer-top {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
+  .footer-links {
+    grid-column: 1;
+    grid-row: 3;
   }
 
   .footer-icons {
-    grid-column: 2;
-    grid-row: 1;
     justify-content: flex-end;
-  }
-
-  /* Row 2: stacked menu items full width */
-  .footer-links {
-    grid-column: 1 / -1;
-    grid-row: 2;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    text-align: center;
   }
 }
