@@ -420,7 +420,17 @@ a { text-decoration: none; color: inherit; }
 
   /* Signup */
   .signup { grid-template-columns: 1fr; }
+
+  /* Footer mobile alignment fix */
+  .footer-col--social {
+    align-items: flex-start;
+  }
+
+  .footer-icons {
+    justify-content: flex-start;
+  }
 }
+
 
 @media (min-width: 961px) {
   .footer-grid {
@@ -436,5 +446,4 @@ a { text-decoration: none; color: inherit; }
     grid-column: 3;
     align-items: flex-end;
   }
-}
 }
