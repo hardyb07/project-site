@@ -13,7 +13,7 @@
 
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Project Prototype</title>
+    <title>Rulya team sports finder</title>
 
     <!-- Inter font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -123,15 +123,24 @@
     </section>
 
     <!-- ================= SIGNUP ================= -->
-    <section class="section section-ice">
+    <section class="section section-ice" aria-label="Waitlist">
       <div class="container signup">
         <div class="signup-left">
-          <h2>Email Signup<br>heading</h2>
-          <p>Some text</p>
-          <div class="input-placeholder" aria-hidden="true"></div>
-          <a href="#" class="btn btn-primary">Sign up →</a>
+          <h2>Stop cancelling. Start playing.</h2>
+          <p class="signup-subtext">Join the waitlist now.</p>
+
+          <form class="waitlist-form" action="#" method="post" novalidate>
+            <label class="sr-only" for="waitlist-email">Email</label>
+            <div class="waitlist-row">
+              <input id="waitlist-email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="123@xxx.com" required>
+              <button type="submit" class="btn btn-primary">Join Waitlist</button>
+            </div>
+            <p class="waitlist-success" data-success hidden>You’re in. We’ll email you when your first games go live.</p>
+          </form>
         </div>
-        <div class="signup-right" aria-hidden="true"></div>
+
+        <!-- Visual placeholder (swap image later) -->
+        <div class="signup-visual" aria-hidden="true"></div>
       </div>
     </section>
 
@@ -274,6 +283,29 @@
         });
 
         render();
+      })();
+    </script>
+
+    <!-- ================= WAITLIST (TEMP) ================= -->
+    <script>
+      (function () {
+        const form = document.querySelector('.waitlist-form');
+        if (!form) return;
+        const input = form.querySelector('#waitlist-email');
+        const success = form.querySelector('[data-success]');
+
+        form.addEventListener('submit', (e) => {
+          e.preventDefault();
+          if (!input || !success) return;
+
+          // Basic front-end validation only (no backend yet)
+          if (input.value && input.checkValidity()) {
+            success.hidden = false;
+          } else {
+            success.hidden = true;
+            input.focus();
+          }
+        });
       })();
     </script>
   </body>
