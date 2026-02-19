@@ -50,7 +50,7 @@
       <div class="hero-bg" aria-hidden="true"></div>
 
       <div class="container hero-content">
-        <h1>SDon’t text 10 people.<br>Just book a game.</h1>
+        <h1>Don’t text 10 people.<br>Just book a game.</h1>
 
         <p class="hero-subtext">Book a game, split the cost, find a squad.</p>
 
@@ -407,18 +407,29 @@
 
         function measureStep() {
           const s = slides();
-          if (s.length < 3) return { step: 0 };
+          if (s.length < 3) return { step: 0, pad: 0 };
+
           const first = s[0].getBoundingClientRect();
           const second = s[1].getBoundingClientRect();
           const gap = Math.max(0, Math.round(second.left - first.right));
           const step = Math.round(first.width + gap);
-          return { step };
+
+          const viewportW = carousel.getBoundingClientRect().width;
+          const pad = Math.max(0, Math.round((viewportW - first.width) / 2));
+
+          return { step, pad };
         }
 
-        function setCenteredTransform() {
-          const { step } = measureStep();
+        function applyCentering() {
+          const { step, pad } = measureStep();
           if (!step) return;
+
+          track.classList.add('is-no-anim');
+          track.style.paddingLeft = pad + 'px';
+          track.style.paddingRight = pad + 'px';
           track.style.transform = `translateX(${-step}px)`; // center slide at index 1
+          track.getBoundingClientRect(); // force reflow
+          track.classList.remove('is-no-anim');
         }
 
         function shiftLeft() {
@@ -436,12 +447,11 @@
             const first = track.firstElementChild;
             if (first) track.appendChild(first);
 
-            // Reset transform back to centered position without anim
+            // Snap back to centered position (no animation)
             track.classList.add('is-no-anim');
             track.style.transform = `translateX(${-step}px)`;
-            requestAnimationFrame(() => {
-              track.classList.remove('is-no-anim');
-            });
+            track.getBoundingClientRect(); // force reflow
+            track.classList.remove('is-no-anim');
 
             setActiveCenter();
             isAnimating = false;
@@ -463,18 +473,18 @@
         }
 
         setActiveCenter();
-        setCenteredTransform();
+        applyCentering();
         start();
 
         window.addEventListener('resize', () => {
-          setCenteredTransform();
+          applyCentering();
         });
 
         document.addEventListener('visibilitychange', () => {
           if (document.hidden) {
             if (timer) window.clearInterval(timer);
           } else {
-            setCenteredTransform();
+            applyCentering();
             start();
           }
         });
