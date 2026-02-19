@@ -204,7 +204,7 @@ a { text-decoration: none; color: inherit; }
 /* Origin (2-column: image left, text right) */
 .origin {
   display: grid;
-  grid-template-columns: 1fr 1.1fr;
+  grid-template-columns: 1fr 1fr; /* left = image, right = text */
   gap: 32px;
   align-items: center;
 }
