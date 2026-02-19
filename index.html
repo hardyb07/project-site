@@ -371,31 +371,20 @@
         const root = document.querySelector('[data-persona-carousel]');
         if (!root) return;
 
-        const track = root.querySelector('[data-persona-track]');
-        
-
-        let slides = Array.from(root.querySelectorAll('[data-persona-slide]'));
-        let isAnimating = false;
+        const slides = Array.from(root.querySelectorAll('[data-persona-slide]'));
         let timer = null;
         const intervalMs = 5200;
+        let current = 0; // start on persona 1
 
-        function setActive(middleIndex = 1) {
-          slides.forEach(s => s.classList.remove('is-left', 'is-active', 'is-right'));
+        function render() {
+          slides.forEach((s, i) => {
+            const isActive = i === current;
+            s.classList.toggle('is-active', isActive);
 
-          const left = slides[(middleIndex - 1 + slides.length) % slides.length];
-          const mid = slides[middleIndex % slides.length];
-          const right = slides[(middleIndex + 1) % slides.length];
-
-          left.classList.add('is-left');
-          mid.classList.add('is-active');
-          right.classList.add('is-right');
-
-          // Only active slide gets overlay content (clean + accessible)
-          slides.forEach((s) => {
             const overlay = s.querySelector('.persona-overlay');
             if (!overlay) return;
 
-            if (s.classList.contains('is-active')) {
+            if (isActive) {
               overlay.removeAttribute('aria-hidden');
               overlay.innerHTML = `
                 <p class="persona-name">${s.dataset.name}</p>
@@ -411,45 +400,26 @@
           });
         }
 
-        function resetAutoplay() {
+        function next() {
+          current = (current + 1) % slides.length;
+          render();
+        }
+
+        function start() {
           if (timer) window.clearInterval(timer);
-          timer = window.setInterval(() => shiftLeft(), intervalMs);
-        }
-
-        function shiftLeft() {
-          if (isAnimating) return;
-          isAnimating = true;
-
-          // Re-order nodes and re-assign classes (CSS handles animation)
-          const first = slides.shift();
-          slides.push(first);
-          track.appendChild(first);
-
-          setActive(1);
-          isAnimating = false;
-        }
-
-        function shiftRight() {
-          if (isAnimating) return;
-          isAnimating = true;
-
-          const last = slides.pop();
-          slides.unshift(last);
-          track.insertBefore(last, track.firstChild);
-
-          setActive(1);
-          isAnimating = false;
+          timer = window.setInterval(next, intervalMs);
         }
 
         // Init
-        setActive(1);
-        resetAutoplay();
+        render();
+        start();
 
+        // Pause when tab inactive
         document.addEventListener('visibilitychange', () => {
           if (document.hidden) {
             if (timer) window.clearInterval(timer);
           } else {
-            resetAutoplay();
+            start();
           }
         });
       })();
