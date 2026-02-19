@@ -211,7 +211,7 @@ a { text-decoration: none; color: inherit; }
   .hero-logo img { width: 26px; }
 
   /* Extra top padding so text never collides with logo */
-  .hero { padding-top: 170px; }
+  .hero { padding-top: 150px; }
 
   /* Hero form stacks nicely */
   .hero-waitlist .waitlist-row { grid-template-columns: 1fr; }
