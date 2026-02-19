@@ -328,6 +328,200 @@ a { text-decoration: none; color: inherit; }
   }
 }
 
+/* ===== PERSONAS (CAROUSEL) ===== */
+.personas {
+  padding: 80px 0;
+}
+
+.personas-inner {
+  position: relative;
+}
+
+.personas-carousel {
+  position: relative;
+  min-height: 86vh; /* almost full screen */
+  display: flex;
+  align-items: center;
+  padding: 0 64px;
+  overflow: hidden; /* creates the partial off-screen look */
+}
+
+.personas-track {
+  display: flex;
+  gap: 24px;
+  width: auto;
+  transform: translateX(0);
+}
+
+.personas-track.is-shifting {
+  transition: transform 900ms cubic-bezier(0.22, 0.65, 0.3, 1);
+}
+
+.personas-track.is-jump {
+  transition: none !important;
+}
+
+.persona-card {
+  flex: 0 0 45%; /* > 33% so left/right peek off-screen */
+  padding: 0;
+  border-radius: var(--radius-lg);
+  position: relative;
+  overflow: hidden;
+}
+
+.persona-stack {
+  display: grid;
+  grid-template-rows: 1.25fr 0.85fr;
+  gap: 14px;
+}
+
+.persona-img {
+  border-radius: var(--radius-lg);
+  background: rgba(22, 30, 84, 0.12);
+  outline: 2px solid rgba(255, 152, 106, 0.20);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.persona-img--top {
+  height: 420px;
+  transform: scale(1);
+  transition: transform 900ms cubic-bezier(0.22, 0.65, 0.3, 1), height 900ms cubic-bezier(0.22, 0.65, 0.3, 1);
+}
+
+.persona-img--bottom {
+  height: 240px;
+}
+
+/* Active state: top image grows + slight zoom */
+.persona-card.is-active .persona-img--top {
+  height: 480px;
+  transform: scale(1.06);
+}
+
+/* Side cards partially visible feel */
+.persona-card.is-left,
+.persona-card.is-right {
+  opacity: 0.8;
+  transform: scale(0.94);
+  transition: transform 900ms cubic-bezier(0.22, 0.65, 0.3, 1), opacity 900ms ease;
+}
+
+.persona-card.is-active {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Overlay content (only on active card; injected via JS) */
+.persona-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 24px;
+  gap: 10px;
+  color: var(--white);
+  pointer-events: none;
+}
+
+.persona-overlay::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(22,30,84,0) 30%, rgba(22,30,84,0.82) 100%);
+}
+
+.persona-overlay > * {
+  position: relative;
+  z-index: 1;
+}
+
+.persona-name {
+  margin: 0;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.9;
+}
+
+.persona-headline {
+  font-family: 'ZT Otez', 'Inter', sans-serif;
+  margin: 0;
+  font-size: clamp(22px, 2.2vw, 34px);
+  line-height: 1.08;
+  font-weight: 400;
+}
+
+.persona-sub {
+  margin: 0;
+  font-size: 14px;
+  opacity: 0.9;
+  max-width: 44ch;
+}
+
+.persona-trigger {
+  margin: 6px 0 0;
+  font-size: 13px;
+  opacity: 0.95;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 999px;
+  padding: 10px 12px;
+  width: fit-content;
+}
+
+.persona-overlay .btn {
+  pointer-events: auto;
+  width: fit-content;
+  margin-top: 8px;
+}
+
+.persona-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 52px;
+  height: 52px;
+  border-radius: 999px;
+  border: none;
+  background: rgba(255,255,255,0.70);
+  color: var(--midnight);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+  z-index: 30;
+}
+
+.persona-arrow:hover {
+  background: rgba(255,255,255,0.92);
+  color: var(--coral);
+  transform: translateY(-50%) scale(1.08);
+}
+
+.persona-arrow--prev { left: 6px; }
+.persona-arrow--next { right: 6px; }
+
+
+/* ===== MOBILE ===== */
+@media (max-width: 960px) {
+  .personas-carousel { padding: 0 18px; min-height: 78vh; }
+
+  .personas-track { gap: 16px; }
+
+  .persona-img--top { height: 320px; }
+  .persona-card.is-active .persona-img--top { height: 360px; }
+  .persona-img--bottom { height: 180px; }
+
+  .persona-overlay { padding: 18px; }
+  .persona-trigger { font-size: 12px; padding: 9px 10px; }
+
+  .persona-arrow { width: 44px; height: 44px; }
+}
+
 /* ===== SIGNUP ===== */
 .signup {
   display: grid;
