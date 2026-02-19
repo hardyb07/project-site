@@ -149,13 +149,13 @@ a { text-decoration: none; color: inherit; }
   font-family: 'ZT Otez', 'Inter', sans-serif;
   font-size: clamp(36px, 5vw, 64px);
   line-height: 1.05;
-  margin: 0 0 24px;
+  margin: 0 0 15px; /* +10px extra space before subtext */
   font-weight: 400; /* ZT Otez only has regular */
   color: var(--white);
 }
 
 .hero-subtext {
-  font-size: 18px;
+  font-size: 20px;
   color: rgba(255, 255, 255, 0.88);
   margin: 0 0 22px;
 }
