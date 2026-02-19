@@ -368,30 +368,35 @@
     <!-- ================= PERSONA CAROUSEL SCRIPT ================= -->
     <script>
       (function () {
-        const root = document.querySelector('[data-persona-carousel]');
-        if (!root) return;
+        const carousel = document.querySelector('[data-persona-carousel]');
+        const track = document.querySelector('[data-persona-track]');
+        if (!carousel || !track) return;
 
-        const slides = Array.from(root.querySelectorAll('[data-persona-slide]'));
-        let timer = null;
         const intervalMs = 5200;
-        let current = 0; // start on persona 1
+        let timer = null;
+        let isAnimating = false;
 
-        function render() {
-          slides.forEach((s, i) => {
-            const isActive = i === current;
-            s.classList.toggle('is-active', isActive);
+        function slides() {
+          return Array.from(track.querySelectorAll('[data-persona-slide]'));
+        }
 
-            const overlay = s.querySelector('.persona-overlay');
+        function setActiveCenter() {
+          const s = slides();
+          s.forEach((el, i) => {
+            const active = i === 1; // center is always index 1
+            el.classList.toggle('is-active', active);
+
+            const overlay = el.querySelector('.persona-overlay');
             if (!overlay) return;
 
-            if (isActive) {
+            if (active) {
               overlay.removeAttribute('aria-hidden');
               overlay.innerHTML = `
-                <p class="persona-name">${s.dataset.name}</p>
-                <h2 class="persona-headline">${s.dataset.headline}</h2>
-                <p class="persona-sub">${s.dataset.sub}</p>
-                <p class="persona-trigger">${s.dataset.trigger}</p>
-                <a class="btn btn-primary" href="#waitlist">${s.dataset.cta}</a>
+                <p class="persona-name">${el.dataset.name}</p>
+                <h2 class="persona-headline">${el.dataset.headline}</h2>
+                <p class="persona-sub">${el.dataset.sub}</p>
+                <p class="persona-trigger">${el.dataset.trigger}</p>
+                <a class="btn btn-primary" href="#waitlist">${el.dataset.cta}</a>
               `;
             } else {
               overlay.setAttribute('aria-hidden', 'true');
@@ -400,25 +405,84 @@
           });
         }
 
-        function next() {
-          current = (current + 1) % slides.length;
-          render();
+        function measureStep() {
+          const s = slides();
+          if (s.length < 3) return { step: 0, pad: 0 };
+          const first = s[0].getBoundingClientRect();
+          const second = s[1].getBoundingClientRect();
+          const gap = Math.max(0, Math.round(second.left - first.right));
+          const step = Math.round(first.width + gap);
+          const viewportW = carousel.getBoundingClientRect().width;
+          const pad = Math.max(0, Math.round((viewportW - first.width) / 2));
+          return { step, pad };
+        }
+
+        function applyCentering() {
+          const { step, pad } = measureStep();
+          if (!step) return;
+
+          track.classList.add('is-no-anim');
+          track.style.paddingLeft = pad + 'px';
+          track.style.paddingRight = pad + 'px';
+          track.style.transform = `translateX(${-step}px)`; // center slide at index 1
+          // force reflow then enable animation
+          track.getBoundingClientRect();
+          track.classList.remove('is-no-anim');
+        }
+
+        function shiftLeft() {
+          if (isAnimating) return;
+          const { step } = measureStep();
+          if (!step) return;
+
+          isAnimating = true;
+          track.style.transform = `translateX(${-2 * step}px)`;
+
+          const onEnd = () => {
+            track.removeEventListener('transitionend', onEnd);
+
+            // Move first slide to end (loop)
+            const first = track.firstElementChild;
+            if (first) track.appendChild(first);
+
+            // Reset transform back to centered position without anim
+            track.classList.add('is-no-anim');
+            track.style.transform = `translateX(${-step}px)`;
+            track.getBoundingClientRect();
+            track.classList.remove('is-no-anim');
+
+            setActiveCenter();
+            isAnimating = false;
+          };
+
+          track.addEventListener('transitionend', onEnd);
         }
 
         function start() {
           if (timer) window.clearInterval(timer);
-          timer = window.setInterval(next, intervalMs);
+          timer = window.setInterval(shiftLeft, intervalMs);
         }
 
-        // Init
-        render();
+        // Init: reorder so persona 1 starts centered (index 1)
+        const s0 = slides();
+        if (s0.length >= 3) {
+          const last = track.lastElementChild;
+          if (last) track.insertBefore(last, track.firstElementChild);
+        }
+
+        setActiveCenter();
+        applyCentering();
         start();
 
-        // Pause when tab inactive
+        window.addEventListener('resize', () => {
+          applyCentering();
+        });
+
         document.addEventListener('visibilitychange', () => {
           if (document.hidden) {
             if (timer) window.clearInterval(timer);
           } else {
+            applyCentering();
             start();
           }
         });
